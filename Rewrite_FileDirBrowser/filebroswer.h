@@ -1,0 +1,64 @@
+#ifndef FILEBROSWER_H
+#define FILEBROSWER_H
+
+#include <QWidget>
+#include <QMenu>
+#include <QAction>
+#include <QSplitter>
+#include <QTreeWidget>
+#include <QTableWidget>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class FileBroswer; }
+QT_END_NAMESPACE
+
+class FileBroswer : public QWidget
+{
+    Q_OBJECT
+
+public:
+    FileBroswer(QWidget *parent = nullptr);
+    ~FileBroswer();
+
+
+
+    void setWidgetLayout();
+
+    void setupConnections();
+
+
+    void setupContextMenu();
+    //这个就是创建邮件菜单功能的菜单
+    //注意：创建菜单功能和启动菜单功能一定不是一回事，创建菜单功能一定是addAction来实现的
+    //不管是创建菜单栏的具体菜单项，还是创建工具栏的具体菜单项，都是addAtion，创建菜单栏的直接项才是addMenu实现的
+
+private slots:
+    //每次在先写成员函数再写槽函数。当发现没有对应的槽函数的时候，再先写个声明即可
+    //所以成员函数和槽函数的关系就是整体和局部具体实现之间的关系(以前写代码的时候先声明出来的经典操作方法)
+    //所以对于以后写Qt的复杂代码的时候，就使用这种思路去设计成员函数和自定义信号函数&自定义槽函数
+
+    //槽函数必定是void返回类型的函数
+    void refreshTree();
+
+    void open_SelectFile();
+    void delete_SelectFile();
+
+
+private:
+    Ui::FileBroswer *ui;
+
+    //具体的菜单项的设计
+    QMenu* m_treeMenu=new QMenu(this);;   //所有数据类型一定是第一二个字母都是大写的，这样记我就不会写错了
+    QMenu* m_tableMenu=new QMenu(this);   //只要是可以传对象树的，一律不要犹豫，立刻就要传父对象参数进来
+
+
+    //两大视图部件的布局设计
+    QTreeWidget* m_dirTree=new QTreeWidget;;
+    QTableWidget* m_fileInfo=new QTableWidget;
+
+    //我这里和老师写的不一样的地方就是：我把定义和初始化都写在头文件里面了。
+    //我认为这是个好习惯，否则就会导致每次我都忘了在实现文件中进行初始化。
+    //所以以后必须必须这样在头文件中定义并初始化堆对象的数据成员，这是我的写法习惯
+
+};
+#endif // FILEBROSWER_H
