@@ -1,0 +1,33 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/bin/cmake -DCMAKE_C_COMPILER=/bin/gcc -DCMAKE_CXX_COMPILER=/bin/g++ -G "Unix Makefiles" -S /tmp/tmp.ch0FbpSqE7/untitled -B /tmp/tmp.ch0FbpSqE7/untitled/cmake-build-debug
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - failed
+-- Check for working C compiler: /bin/gcc
+-- Check for working C compiler: /bin/gcc - broken
+CMake Error at /usr/share/cmake-3.22/Modules/CMakeTestCCompiler.cmake:69 (message):
+  The C compiler
+
+    "/bin/gcc"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: /tmp/tmp.ch0FbpSqE7/untitled/cmake-build-debug/CMakeFiles/CMakeTmp
+    
+    Run Build Command(s):/bin/cmake -f Makefile cmTC_695e4/fast && CMake Error: Unknown argument -f
+    CMake Error: Run 'cmake --help' for all supported options.
+    
+    
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:2 (project)
+
+
+-- Configuring incomplete, errors occurred!
+See also "/tmp/tmp.ch0FbpSqE7/untitled/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/tmp/tmp.ch0FbpSqE7/untitled/cmake-build-debug/CMakeFiles/CMakeError.log".

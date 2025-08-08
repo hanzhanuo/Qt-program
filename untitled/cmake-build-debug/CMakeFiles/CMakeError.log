@@ -1,0 +1,17 @@
+Detecting C compiler ABI info failed to compile with the following output:
+Change Dir: /tmp/tmp.ch0FbpSqE7/untitled/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/bin/cmake -f Makefile cmTC_77757/fast && CMake Error: Unknown argument -f
+CMake Error: Run 'cmake --help' for all supported options.
+
+
+
+
+Determining if the C compiler works failed with the following output:
+Change Dir: /tmp/tmp.ch0FbpSqE7/untitled/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/bin/cmake -f Makefile cmTC_051f3/fast && CMake Error: Unknown argument -f
+CMake Error: Run 'cmake --help' for all supported options.
+
+
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Answer_TCP_cilent</class>
+ <widget class="QWidget" name="Answer_TCP_cilent">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Answer_TCP_cilent</string>
+  </property>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

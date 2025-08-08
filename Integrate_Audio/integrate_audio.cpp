@@ -1,0 +1,187 @@
+#include "integrate_audio.h"
+#include "ui_integrate_audio.h"
+
+
+
+Integrate_Audio::Integrate_Audio(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::Integrate_Audio)
+{
+    ui->setupUi(this);
+}
+
+Integrate_Audio::~Integrate_Audio()
+{
+    delete ui;
+}
+
+void Integrate_Audio::musicopen()
+{
+
+    QPushButton* p_select_music=new QPushButton("点击选择音乐",this);
+    connect(p_select_music,&QPushButton::clicked,[=](){
+        QString path=QFileDialog::getOpenFileName(this,"字幕","本地url链接","*.mp3");
+        //果然：这里必须要使用类名来调用也是因为这个函数是个静态函数。所以每次调用前只要看到是静态函数，就进行类名调用的方法处理
+        //只要有返回值，就一定要养成习惯在同一行进行返回值的承接，这个就是Qt的写代码习惯
+
+        //并且经过训练，我已经会了如何查看参数了，并且根据写的越来越多，对于参数是什么就会越来越熟练能看出来
+        //所以多使用助手，多看源码，就会发现自己的Qt能力快速提高了
+
+
+        mp_player->setMedia(QMediaContent(path));
+        //对于IOdevice流还是了解的不多，所以这就需要进行自学了。
+        //所以就像源码一样，老师教的一定是一种学习方法，剩下的浩如烟海的知识体系的拓展就需要自己搜索了
+
+        mp_player->play();
+        //这个设置播放的操作总共就三步走，所以非常非常简单
+    });
+    //p_player->setMedia(QMediaContent());
+    //难怪这里会报错，原因就是这里写在了定义的局部变量path的生命周期以外。
+    /*
+    这种问题的处理思路：
+    1.把这行语句放到lambda表达式内部(多一行少一行对lambda表达式没有任何影响)
+    2.延长path的生命周期，延长方法是设置为数据成员
+    */
+
+
+}
+
+
+void Integrate_Audio::ButtonConnect()
+{
+    //设置播放按键
+    QPushButton* p_btn_play=new QPushButton("播放",this);
+    connect(p_btn_play,&QPushButton::clicked,&QMediaPlayer::play);
+
+    //设置暂停按键
+    QPushButton* p_btn_pause=new QPushButton("暂停",this);
+    connect(p_btn_pause,&QPushButton::clicked,&QMediaPlayer::pause);
+
+    //设置播放下一首
+    //这里没法实现播放下一首，原因是如果想要播放下一首就必须使用另一个类
+    //————那个在文档上的list类，只有使用它才能按列表进行播放，然后才能实现顺序播放等一系列操作
+
+    //设置停止播放
+    QPushButton* p_btn_stop=new QPushButton("停止",this);
+    connect(p_btn_stop,&QPushButton::clicked,&QMediaPlayer::stop);
+
+
+
+}
+
+void Integrate_Audio::volumeslider()
+{
+    QSlider* p_volSlider=new QSlider(Qt::Horizontal,this);    //这里又学会了一个：oriental就是面向方位的意思，所以这种情况下基本上都是无脑填横纵向枚举值的
+    connect(p_volSlider,&QSlider::valueChanged,[=](int value){
+        //这里写如何通过滑动实现对声音的变化
+
+        //p_player->   果然这里是因为对于p_player是局部变量所以无法捕获，所以必须要设置为数据成员才能进一步进行操作
+        //所以只要见到在其他位置还需要使用的，直接无脑修改为数据成员即可
+
+
+
+        //这里的代码逻辑比我想的难多了，所以这个综合题真正的难的是纯粹的代码逻辑，而不是接口调用
+        //这才是真正Qt难度的精髓，才是Qt程序员不可替代性的开始
+        //真正的代码逻辑：
+
+    });
+
+
+}
+
+void Integrate_Audio::playprogress()
+{
+    //这个似乎还不能使用进度条，因为进度条的展示效果太丑了。那应该使用什么实现展示呢？
+    //果然最后虽然内容上使用进度条更好一些，但是效果上还是使用了滑动条
+
+    //为了对于进度条练练手，不妨直接使用progressbar来试一下？
+
+    //前面我还觉得单纯是展示效果丑的原因，但其实是进度条没法主动滑动调整进度，只能被动调整进度，
+    //所以不能使用进度条实现该功能，只可能使用滑动条实现该功能
+
+//    QProgressBar* p_pgsSlider=new QProgressBar(this);
+//    p_pgsSlider->
+
+
+    connect(mp_pgsSlider,&QSlider::valueChanged,[](){
+        //如何实现对于播放进度的变化
+    });
+
+    //进度条拖动所触发的信号和槽：
+    connect(mp_pgsSlider,&QSlider::sliderReleased,this,&Integrate_Audio::seek_position);
+    //根据搜索和老师写的比较，也确实是这种写法更好，老师比我想的更深一层，这个绝对是最具有实时性的写法
+    //信号和槽一定是先决定触发什么行为，才能知道是谁的行为(即先确定二四，才能再确定一三)
+    //所以这里看似是先写this指针，但其实是先确定了使用自定义的槽函数，然后才决定的写this指针作为receiver
+
+
+    //定时器锁导致的进度条修改(即上面是人主动拖动，下面是根据时间被动拖动进度条)
+    QTimer* p_time=new QTimer(this);
+    connect(p_time,&QTimer::timeout,this,&Integrate_Audio::update_position);
+    //timeout就是到时间了，所以定时器的三步走非常非常好记，只要记住到时间了，其他的都是不变量，剩下的就只剩设计不同的槽函数了
+    p_time->start(1000);   //这个start只接受毫秒为单位
+}
+
+void Integrate_Audio::labelshow()
+{
+
+    //label可以显示多种内容，可以显示静态图和动态图，这里应该是用来显示文本的，显示文本的怎么写？
+    //复习并且掌握对于这些部件的通用学习方法
+}
+
+
+
+void Integrate_Audio::update_position()   //根据时间更新进度条的槽函数
+//对于槽函数，还有一个要求就是尽可能集成度高，比如这里的更新操作，就是把手动拖动和自动更新都通过分支写在一起了
+//这个集成度高可以理解为抽象度高，即槽函数的复用性强——————这一点在计算器问题的运算符上体现的非常典型
+//如果哪个运算符想要更典型一点，甚至可以通过caculator的回调函数写法配合使用
+{
+    //现在总算知道怎么能立刻看出什么需要设计为全局了——————至少只要是在自定义槽函数中使用的，就必须设计为全局的数据成员
+
+    if(mp_pgsSlider->isSliderDown()){   //表示此时如果用户正在拖动进度条的判断
+
+        //这里是用于判断如果用户恰好也在拖动，而不是这里是由用户拖动导致的
+        //所以这里有一个推论：比如这里的信号是定时器更新，所以对应的槽就一定不可能因为对象拖动所导致
+        //所以这里仅仅是对于像线程一样的:当定时器和用户同时拖动的情况下，定时器让步于用户
+        //所以这虽然看起来很简单，但其实是想了很长时间的，类似于线程抢占同一个资源的优先级健壮性判断
+
+        return;
+    }
+
+    if(mp_player->duration()>0){  //判断总长度是否>0?  所以这些if的放置顺序是很考究的，但是一般书写的顺序都是：先写再进行位置调换，因为几个if之间完全不耦合，所以可以直接调换位置
+        //无论是ui部件的连环箭头，还是这里的单个箭头，最终表现为的都仅仅是一个函数，所以只需要盯着函数的返回值即可，不需要进行任何额外的瞎动脑
+
+        //从这里开始都是进行纯数学运算+和
+        int position = (mp_player->position() * 100)/mp_player->duration();
+        mp_pgsSlider->setValue(position);
+
+        // 更新时间显示
+        //当前时间，使用position获取
+        QTime currentTime(0, 0);
+        currentTime = currentTime.addMSecs(mp_player->position());
+        //总时间，使用duration获取
+        QTime totalTime(0, 0);
+        totalTime = totalTime.addMSecs(mp_player->duration());
+
+        //这里最后一句就是label的结果展示，所以setText一定是和string的转换和string的拼接相配合的
+        //这种部件展示方法极其极其重要，不仅被用在label的展示中，还被用在各种其他的展示中
+        //所以一定要熟练这种展示方法，当条件反射使用
+        mp_show_prg->setText(currentTime.toString("mm:ss")+ "/" + totalTime.toString("mm:ss"));
+
+    }
+}
+
+void Integrate_Audio::seek_position()   //手动查找到位置的槽函数
+//书写的思路顺序一般都是：先确定连接的时候使用自定义槽函数，再到头文件声明这个槽函数，最后才是在实现文件中写代码逻辑
+//并且现在来看，根据对于Qt设计的综合性越来越强，其实所有东西(无论是布局还是事件系统)，最难的部分永远是信号函数和槽函数的代码逻辑设计
+//并且越是综合性问题，就越别指望直接使用lambda表达式写出来(自定义槽函数的隐藏this指针形式)
+//而是只能寄希望于自定义独立的槽函数。并且这个槽函数的代码逻辑一定会很麻烦，所以耐下心写，写出抽象
+{
+    if(mp_player->duration()>0){
+        qint64 targetPos =(mp_pgsSlider->value() * mp_player->duration())/100;
+
+        //设置播放位置——————所以这个是通过手动拉进度条实现找到播放位置的操作
+        mp_player->setPosition(targetPos);
+
+    }
+}
+
